@@ -249,6 +249,9 @@ func (cmd *consumeCmd) parseFlags(as []string) consumeArgs {
 	flags.StringVar(&args.version, "version", "", "Kafka protocol version")
 	flags.StringVar(&args.encodeValue, "encodevalue", "string", "Present message value as (string|hex|base64), defaults to string.")
 	flags.StringVar(&args.encodeKey, "encodekey", "string", "Present message key as (string|hex|base64), defaults to string.")
+	flags.StringVar(&args.tlsca, "tlsca", "string", "Path to TLS certificate authority file")
+	flags.StringVar(&args.tlscert, "tlscert", "string", "Path to TLS client certificate")
+	flags.StringVar(&args.tlskey, "tlskey", "string", "Path to TLS client key file")
 
 	flags.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage of consume:")
@@ -292,6 +295,8 @@ func (cmd *consumeCmd) run(args []string) {
 
 	cmd.setupClient()
 
+	// TODO this is where we should add the different consumer object when we
+	// are going to be pulling from a cluster who has certificates configured
 	if cmd.consumer, err = sarama.NewConsumerFromClient(cmd.client); err != nil {
 		failf("failed to create consumer err=%v", err)
 	}
